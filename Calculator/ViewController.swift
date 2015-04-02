@@ -12,6 +12,10 @@ class ViewController: UIViewController
 {
     @IBOutlet weak var display: UILabel!
 
+    var operandStack = Array<Double>()
+    
+    var total : Double = 0
+
     var userIsInTheMiddleOfTypingANumber = false
     
     @IBAction func appendDigit(sender: UIButton) {
@@ -30,19 +34,29 @@ class ViewController: UIViewController
             enter()
         }
         switch operation {
-        case "✕":
-            if operandStack.count >= 2 {
-                displayValue = operandStack.removeLast() * operandStack.removeLast()
-            }
-//        case "÷":
-//        case "+":
-//        case "−":
-        default:
-            break
+            case "✕": performOperation { $0 * $1 }
+            case "÷": performOperation { $1 / $0 }
+            case "+": performOperation { $0 + $1 }
+            case "−":  performOperation { $1 - $0 }
+            case "√":  performOperation { sqrt($0) }
+            default: break
         }
     }
     
-    var operandStack = Array<Double>()
+    func performOperation(operation: (Double, Double) -> Double) {
+        if operandStack.count >= 2 {
+            displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
+            enter()
+        }
+    }
+
+    func performOperation(operation: Double -> Double) {
+        if operandStack.count >= 2 {
+            displayValue = operation(operandStack.removeLast())
+            enter()
+        }
+    }
+    
     @IBAction func enter() {
         userIsInTheMiddleOfTypingANumber = false
         operandStack.append(displayValue)
@@ -51,6 +65,7 @@ class ViewController: UIViewController
     
     var displayValue: Double {
         get {
+            println("get double \(display.text!)")
             return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
         }
         set {
