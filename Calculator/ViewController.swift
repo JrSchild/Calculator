@@ -10,14 +10,15 @@ import UIKit
 
 class ViewController: UIViewController
 {
-    @IBOutlet weak var display: UILabel!
-
+    
+    // Initialize stack to store the operation values
     var operandStack = Array<Double>()
     
-    var total : Double = 0
-
     var userIsInTheMiddleOfTypingANumber = false
     
+    @IBOutlet weak var display: UILabel!
+    
+    // Add digits to display text
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
         if userIsInTheMiddleOfTypingANumber {
@@ -28,6 +29,7 @@ class ViewController: UIViewController
         }
     }
     
+    // Run a basic operation with numbers off the stack.
     @IBAction func operate(sender: UIButton) {
         let operation = sender.currentTitle!
         if userIsInTheMiddleOfTypingANumber {
@@ -43,6 +45,7 @@ class ViewController: UIViewController
         }
     }
     
+    // Perform operation on two doubles
     func performOperation(operation: (Double, Double) -> Double) {
         if operandStack.count >= 2 {
             displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
@@ -50,23 +53,26 @@ class ViewController: UIViewController
         }
     }
 
+    // Perform operation on a single double
     func performOperation(operation: Double -> Double) {
-        if operandStack.count >= 2 {
+        if operandStack.count >= 1 {
             displayValue = operation(operandStack.removeLast())
             enter()
         }
     }
     
+    // Add the displayValue to the stack
     @IBAction func enter() {
         userIsInTheMiddleOfTypingANumber = false
         operandStack.append(displayValue)
         println("operandStack = \(operandStack)")
     }
     
+    // Getters and setters for displayValue
     var displayValue: Double {
         get {
-            println("get double \(display.text!)")
-            return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+            // Tutorial code throws error (iPhone 4, iOS 7). This works better
+            return (display.text! as NSString).doubleValue
         }
         set {
             display.text = "\(newValue)"
