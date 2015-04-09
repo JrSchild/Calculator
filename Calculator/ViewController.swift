@@ -50,6 +50,24 @@ class ViewController: UIViewController
         }
     }
     
+    @IBAction func setM() {
+        if let value = displayValue {
+            brain.setVariable("M", value: value)
+        }
+    }
+    
+    @IBAction func getM() {
+        if let value = brain.getVariable("M") {
+            displayValue = value
+        }
+    }
+    
+    @IBAction func clear() {
+        brain.clearVariable("M")
+        brain.clear()
+        displayValue = 0
+    }
+    
     // Run a basic operation with numbers off the stack.
     @IBAction func operate(sender: UIButton) {
         if userIsInTheMiddleOfTypingANumber {

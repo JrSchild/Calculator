@@ -102,4 +102,18 @@ class CalculatorBrain
         }
         return evaluate()
     }
+    
+    func clear() {
+        opStack = []
+    }
+    
+    func setVariable(name: String, value: Double) {
+        variableValues[name] = value
+    }
+    func getVariable(name: String) -> Double? {
+        return variableValues[name]
+    }
+    func clearVariable(name: String) {
+        variableValues[name] = nil
+    }
 }
