@@ -10,13 +10,11 @@ import UIKit
 
 class ViewController: UIViewController
 {
-    
-    // Initialize stack to store the operation values
-    var operandStack = Array<Double>()
+    @IBOutlet weak var display: UILabel!
     
     var userIsInTheMiddleOfTypingANumber = false
     
-    @IBOutlet weak var display: UILabel!
+    var brain = CalculatorBrain()
     
     // Add digits to display text
     @IBAction func appendDigit(sender: UIButton) {
@@ -31,41 +29,26 @@ class ViewController: UIViewController
     
     // Run a basic operation with numbers off the stack.
     @IBAction func operate(sender: UIButton) {
-        let operation = sender.currentTitle!
         if userIsInTheMiddleOfTypingANumber {
             enter()
         }
-        switch operation {
-            case "✕": performOperation { $0 * $1 }
-            case "÷": performOperation { $1 / $0 }
-            case "+": performOperation { $0 + $1 }
-            case "−":  performOperation { $1 - $0 }
-            case "√":  performOperation { sqrt($0) }
-            default: break
-        }
-    }
-    
-    // Perform operation on two doubles
-    func performOperation(operation: (Double, Double) -> Double) {
-        if operandStack.count >= 2 {
-            displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
-            enter()
-        }
-    }
-
-    // Perform operation on a single double
-    func performOperation(operation: Double -> Double) {
-        if operandStack.count >= 1 {
-            displayValue = operation(operandStack.removeLast())
-            enter()
+        if let operation = sender.currentTitle {
+            if let result = brain.PerformOperation(operation) {
+                displayValue = result
+            } else {
+                displayValue = 0
+            }
         }
     }
     
     // Add the displayValue to the stack
     @IBAction func enter() {
         userIsInTheMiddleOfTypingANumber = false
-        operandStack.append(displayValue)
-        println("operandStack = \(operandStack)")
+        if let result = brain.pushOperand(displayValue) {
+            displayValue = result
+        } else {
+            displayValue = 0
+        }
     }
     
     // Getters and setters for displayValue
