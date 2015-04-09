@@ -22,8 +22,6 @@ class ViewController: UIViewController
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
         
-        historyLabel.text = historyLabel.text! + digit
-        
         if userIsInTheMiddleOfTypingANumber {
             display.text = display.text! + digit
         } else {
@@ -34,7 +32,6 @@ class ViewController: UIViewController
     
     @IBAction func addComma() {
         if display.text!.rangeOfString(".") == nil {
-            historyLabel.text = historyLabel.text! + "."
             display.text = display.text! + "."
         }
     }
@@ -59,8 +56,8 @@ class ViewController: UIViewController
             enter()
         }
         if let operation = sender.currentTitle {
-            historyLabel.text = historyLabel.text! + operation
             if let result = brain.PerformOperation(operation) {
+                historyLabel.text = brain.formula
                 displayValue = result
             } else {
                 displayValue = 0
@@ -71,7 +68,7 @@ class ViewController: UIViewController
     // Add the displayValue to the stack
     @IBAction func enter() {
         userIsInTheMiddleOfTypingANumber = false
-        if let result = brain.pushOperand(displayValue) {
+        if let result = brain.pushOperand(displayValue!) {
             displayValue = result
         } else {
             displayValue = 0
@@ -79,14 +76,18 @@ class ViewController: UIViewController
     }
     
     // Getters and setters for displayValue
-    var displayValue: Double {
+    var displayValue: Double? {
         get {
             // Tutorial code throws error (iPhone 4, iOS 7). This works better
             return (display.text! as NSString).doubleValue
         }
         set {
-            display.text = "\(newValue)"
-            userIsInTheMiddleOfTypingANumber = false
+            if newValue == nil {
+                display.text = ""
+            } else {
+                display.text = "\(newValue!)"
+                userIsInTheMiddleOfTypingANumber = false
+            }
         }
     }
 }
