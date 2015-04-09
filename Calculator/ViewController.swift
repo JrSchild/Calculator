@@ -16,14 +16,40 @@ class ViewController: UIViewController
     
     var brain = CalculatorBrain()
     
+    @IBOutlet weak var historyLabel: UILabel!
+    
     // Add digits to display text
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
+        
+        historyLabel.text = historyLabel.text! + digit
+        
         if userIsInTheMiddleOfTypingANumber {
             display.text = display.text! + digit
         } else {
             display.text = digit
             userIsInTheMiddleOfTypingANumber = true
+        }
+    }
+    
+    @IBAction func addComma() {
+        if display.text!.rangeOfString(".") == nil {
+            historyLabel.text = historyLabel.text! + "."
+            display.text = display.text! + "."
+        }
+    }
+    
+    @IBAction func addConstant(sender: UIButton) {
+        if userIsInTheMiddleOfTypingANumber {
+            enter()
+        }
+        if let operation = sender.currentTitle {
+            switch operation {
+            case "π":
+                displayValue = M_PI
+                enter()
+            default: break
+            }
         }
     }
     
@@ -33,6 +59,7 @@ class ViewController: UIViewController
             enter()
         }
         if let operation = sender.currentTitle {
+            historyLabel.text = historyLabel.text! + operation
             if let result = brain.PerformOperation(operation) {
                 displayValue = result
             } else {
